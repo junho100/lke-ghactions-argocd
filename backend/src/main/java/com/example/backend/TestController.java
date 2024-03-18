@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     @RequestMapping
     public String test() {
-        return "this is v2";
+        return "this is v3";
     }
 }
