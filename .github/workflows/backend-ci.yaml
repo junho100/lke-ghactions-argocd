@@ -1,0 +1,47 @@
+name: cicd catalog service
+on:
+  push:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: bemodesty306/backend:${{ github.sha }}
+
+      - name: Git config
+        run: |
+          git config --global user.email ${{ secrets.GIT_EMAIL }}
+          git config --global user.name ${{ secrets.GIT_USERNAME }}
+
+      - name: git push image tag to k8 repo
+        env:
+          GITHUB_REPO: ${{ github.repository.name }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          sed -i "s|image:.*|image: bemodesty306/backend:$GITHUB_SHA|g" kubernetes/deployment.yaml
+          git add .
+          git commit -m "Deploy: deploy image tag $GITHUB_SHA to k8s repo"
+          git push -f --set-upstream origin master
