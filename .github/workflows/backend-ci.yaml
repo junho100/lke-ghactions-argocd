@@ -41,7 +41,7 @@ jobs:
           GITHUB_REPO: ${{ github.repository.name }}
           GITHUB_SHA: ${{ github.sha }}
         run: |
-          sed -i "s|image:.*|image: bemodesty306/backend:$GITHUB_SHA|g" kubernetes/deployment.yaml
+          sed -i "s|image:.*|image: bemodesty306/backend:$GITHUB_SHA|g" kubernetes/backend/deployment.yaml
           git add .
           git commit -m "Deploy: deploy image tag $GITHUB_SHA to k8s repo"
           git push -f --set-upstream origin master
