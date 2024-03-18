@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: test-service
-          image: bemodesty306/backend:lastest
+          image: bemodesty306/backend:fcfe93afe7f5565f05446d7ecbbfa914ceb7bac1
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
